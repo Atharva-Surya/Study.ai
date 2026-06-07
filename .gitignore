@@ -1,0 +1,64 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+backend/env/
+
+# Environment files
+.env
+.env.*
+
+# Editor and IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs/
+*.log
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# Testing
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Type checking
+.mypy_cache/
+
+# Caches
+.cache/
+
+# Databases, vector stores, and large artifacts
+*.sqlite3
+faiss_index/
+*.faiss
+chroma_db/
+chroma.sqlite3
+
+# Node
+node_modules/
+frontend/node_modules/
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Secrets and keys
+*.pem
+*.key
+*.crt

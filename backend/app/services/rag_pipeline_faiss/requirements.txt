@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+
+langchain
+langchain-community
+langchain-chroma
+langchain-huggingface
+
+chromadb
+sentence-transformers
+faiss-cpu
+
+pypdf
+
+requests
+torch
