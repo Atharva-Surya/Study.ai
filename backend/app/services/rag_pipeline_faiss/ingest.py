@@ -36,7 +36,7 @@ print(f"Created {len(chunks)} chunks")
 print("Loading embedding model...")
 
 embeddings = HuggingFaceEmbeddings(
-    model_name="BAAI/bge-base-en-v1.5"
+    model_name="BAAI/bge-small-en-v1.5"
 )
 
 print("Creating vector database...")

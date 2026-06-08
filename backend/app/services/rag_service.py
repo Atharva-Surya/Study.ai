@@ -10,7 +10,7 @@ from langchain_community.vectorstores import FAISS
 from app.services.rag_pipeline_faiss.prompt import PROMPT_TEMPLATE
 
 BASE_DIR = os.path.join(os.path.dirname(__file__), "rag_pipeline_faiss")
-DEFAULT_EMBED_MODEL = os.getenv("RAG_EMBEDDING_MODEL", "BAAI/bge-base-en-v1.5")
+DEFAULT_EMBED_MODEL = os.getenv("RAG_EMBEDDING_MODEL", "BAAI/bge-small-en-v1.5")
 DEFAULT_INDEX_DIR = os.getenv("RAG_FAISS_INDEX_PATH", os.path.join(BASE_DIR, "faiss_index"))
 MODEL_SERVER_URL = os.getenv("RAG_MODEL_SERVER_URL", "http://localhost:11434/api/generate")
 SIMILARITY_THRESHOLD = float(os.getenv("RAG_SIMILARITY_THRESHOLD", "1.0"))

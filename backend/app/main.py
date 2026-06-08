@@ -60,12 +60,18 @@ async def log_requests(request, call_next):
     return response
 
 # CORS setup
-origins = [
+# Allow localhost for development, and production URLs via environment variables
+DEV_ORIGINS = [
     "http://localhost:3000",
-    "http://localhost:5173",  # React Vite default port
+    "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://localhost:8000",
+    "http://localhost:8004",
 ]
+
+PROD_FRONTEND_URL = os.getenv("FRONTEND_URL", "").strip()
+origins = DEV_ORIGINS
+if PROD_FRONTEND_URL:
+    origins = list(set(origins + [PROD_FRONTEND_URL]))
 
 app.add_middleware(
     CORSMiddleware,
