@@ -1,0 +1,35 @@
+# Render service definitions for staging and production
+# Update `name`, `region`, `plan`, and `envVars` as needed in Render dashboard or here.
+services:
+  - type: web
+    name: ai-study-backend-staging
+    env: python
+    region: singapore
+    plan: free
+    branch: develop
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: gunicorn -w 2 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT backend.app.main:app
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: PORT
+        value: 8004
+
+  - type: web
+    name: ai-study-backend-production
+    env: python
+    region: singapore
+    plan: starter
+    branch: main
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: gunicorn -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT backend.app.main:app
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: PORT
+        value: 8004
+
+# Notes:
+# - Do NOT store secrets directly in this file. Add sensitive env vars (DATABASE_URL, SECRET_KEY, API keys)
+#   in the Render Dashboard (Environment → Environment Variables) or use Render's secret manager.
+# - Ensure `gunicorn` and `uvicorn` (and any other production dependencies) are listed in
+#   `backend/requirements.txt` so the build step installs them.
+# - Adjust `region` and `plan` to match your account and performance needs.
