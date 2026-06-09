@@ -12,6 +12,7 @@ backend/env/
 # Environment files
 .env
 .env.*
+.env.production
 
 # Editor and IDE
 .vscode/

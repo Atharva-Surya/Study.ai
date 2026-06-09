@@ -1,6 +1,7 @@
 import os
 import runpy
 import requests
+import json
 from typing import Dict, Any, Optional
 
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -12,7 +13,9 @@ from app.services.rag_pipeline_faiss.prompt import PROMPT_TEMPLATE
 BASE_DIR = os.path.join(os.path.dirname(__file__), "rag_pipeline_faiss")
 DEFAULT_EMBED_MODEL = os.getenv("RAG_EMBEDDING_MODEL", "BAAI/bge-small-en-v1.5")
 DEFAULT_INDEX_DIR = os.getenv("RAG_FAISS_INDEX_PATH", os.path.join(BASE_DIR, "faiss_index"))
-MODEL_SERVER_URL = os.getenv("RAG_MODEL_SERVER_URL", "http://localhost:11434/api/generate")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 SIMILARITY_THRESHOLD = float(os.getenv("RAG_SIMILARITY_THRESHOLD", "1.0"))
 
 _embeddings = None
@@ -81,16 +84,29 @@ def ask(question: str, k: int = 5) -> Dict[str, Any]:
 
     try:
         payload = {
-            "model": os.getenv("RAG_GENERATION_MODEL", "qwen3:8b"),
-            "prompt": prompt,
-            "stream": False,
-            "think": False,
-            "options": {"num_predict": int(os.getenv("RAG_NUM_PREDICT", "1000"))}
+            "contents": [
+                {"role": "user", "parts": [{"text": prompt}]}
+            ],
+            "generationConfig": {"temperature": 0.7}
         }
-        resp = requests.post(MODEL_SERVER_URL, json=payload, timeout=int(os.getenv("RAG_MODEL_TIMEOUT", "300")))
+        headers = {
+            "Content-Type": "application/json",
+            "x-goog-api-key": GEMINI_API_KEY,
+        }
+        resp = requests.post(
+            GEMINI_API_URL.format(model=GEMINI_MODEL),
+            json=payload,
+            headers=headers,
+            timeout=int(os.getenv("RAG_MODEL_TIMEOUT", "300"))
+        )
         resp.raise_for_status()
         data = resp.json()
-        answer = data.get("response") or data.get("thinking") or ""
+        candidates = data.get("candidates", [])
+        if candidates:
+            parts = candidates[0].get("content", {}).get("parts", [])
+            answer = parts[0].get("text", "") if parts else ""
+        else:
+            answer = ""
     except Exception as e:
         return {"answer": f"Model server error: {e}", "similarity_score": float(best_score)}
 
